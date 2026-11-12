@@ -1280,7 +1280,7 @@
 </form>
 
 <script>
-var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwxWsfIPpFb8m0w6KDIJFg5OFSqdZgq78glRhgy0hbuHSOUwqF8SVCLQbo9c9Me3I6vAg/exec';
+var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyj8wes7VNFvo4-Ksdz_ZLAS0stPwoSIsS0Db8brpGyGS_9ZPvq5LXJ3CO9wOGZMwloLQ/exec';
 var currentPassword = null;
 var autoSaveTimer = null;
 
@@ -1334,22 +1334,8 @@ function collectForm() {
 function saveForm() {
   if (!currentPassword) return;
   var formData = collectForm();
-  var form = document.createElement('form');
-  form.method = 'POST';
-  form.action = SCRIPT_URL;
-  form.target = 'hidden-save-frame';
-  var fields = { type: 'questionnaire', password: currentPassword, formData: JSON.stringify(formData) };
-  for (var key in fields) {
-    var input = document.createElement('input');
-    input.type = 'hidden';
-    input.name = key;
-    input.value = fields[key];
-    form.appendChild(input);
-  }
-  document.body.appendChild(form);
-  form.submit();
-  document.body.removeChild(form);
-  showSaveStatus();
+  var url = SCRIPT_URL + '?type=questionnaire&action=save&password=' + encodeURIComponent(currentPassword) + '&formData=' + encodeURIComponent(JSON.stringify(formData));
+  fetch(url).then(function() { showSaveStatus(); }).catch(function() { showSaveStatus(); });
 }
 
 function showSaveStatus() {
