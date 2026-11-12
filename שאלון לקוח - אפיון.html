@@ -1280,7 +1280,7 @@
 </form>
 
 <script>
-var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz3DuZQiDwMV_isTMZPuJcdd_qqs91McFvgJ4OiORM6_Bc96b2QaFyRsYmIK1THwLBGSw/exec';
+var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwxWsfIPpFb8m0w6KDIJFg5OFSqdZgq78glRhgy0hbuHSOUwqF8SVCLQbo9c9Me3I6vAg/exec';
 var currentPassword = null;
 var autoSaveTimer = null;
 
@@ -1334,14 +1334,22 @@ function collectForm() {
 function saveForm() {
   if (!currentPassword) return;
   var formData = collectForm();
-  fetch(SCRIPT_URL, {
-    method: 'POST',
-    mode: 'no-cors',
-    headers: { 'Content-Type': 'text/plain' },
-    body: JSON.stringify({ type: 'questionnaire', password: currentPassword, formData: formData })
-  }).then(function() {
-    showSaveStatus();
-  });
+  var form = document.createElement('form');
+  form.method = 'POST';
+  form.action = SCRIPT_URL;
+  form.target = 'hidden-save-frame';
+  var fields = { type: 'questionnaire', password: currentPassword, formData: JSON.stringify(formData) };
+  for (var key in fields) {
+    var input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = key;
+    input.value = fields[key];
+    form.appendChild(input);
+  }
+  document.body.appendChild(form);
+  form.submit();
+  document.body.removeChild(form);
+  showSaveStatus();
 }
 
 function showSaveStatus() {
@@ -1362,5 +1370,6 @@ function startAutoSave() {
 }
 </script>
 
+<iframe name="hidden-save-frame" style="display:none"></iframe>
 </body>
 </html>
