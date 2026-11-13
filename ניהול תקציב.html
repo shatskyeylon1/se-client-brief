@@ -751,7 +751,7 @@
 </footer>
 
 <script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxXCXjmxZ8OcZd5laEXMFT5HfOQ4Ir1fFc5lidbJdZDzx4rvRSHRELL50ySwXNcMsNmYA/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwvHKSzxEyI_5MqZ99vVJHNx5AzlaWX9VGRbWH__2c--q828FHj6f2z2rvjPbkE5IBIYg/exec";
 const _urlPass = new URLSearchParams(window.location.search).get('password');
 if (_urlPass) sessionStorage.setItem('se_portal_password', _urlPass);
 const myPassword = _urlPass || sessionStorage.getItem('se_portal_password') || '';
@@ -812,9 +812,9 @@ function applyData(data) {
 async function loadData(password) {
   if (!password) return;
   try {
-    const res = await fetch(SCRIPT_URL + '?password=' + encodeURIComponent(password));
-    const data = await res.json();
-    if (data && Object.keys(data).length) applyData(data);
+    const res = await fetch(SCRIPT_URL + '?type=budget&password=' + encodeURIComponent(password));
+    const result = await res.json();
+    if (result && result.data && Object.keys(result.data).length) applyData(result.data);
   } catch (err) { console.error('load failed', err); }
 }
 
@@ -823,10 +823,15 @@ async function saveData() {
   const btn = document.getElementById('save-btn');
   btn.textContent = 'שומר...';
   try {
-    await fetch(SCRIPT_URL, {
-      method: 'POST',
-      body: JSON.stringify({ password: myPassword, data: collectData() })
-    });
+    const formData = collectData();
+    const allKeys = Object.keys(formData);
+    const half = Math.ceil(allKeys.length / 2);
+    const chunk1 = {}, chunk2 = {};
+    allKeys.forEach((k, i) => { if (i < half) chunk1[k] = formData[k]; else chunk2[k] = formData[k]; });
+    const url1 = SCRIPT_URL + '?type=budget&action=save&password=' + encodeURIComponent(myPassword) + '&fd=' + encodeURIComponent(JSON.stringify(chunk1));
+    const url2 = SCRIPT_URL + '?type=budget&action=merge&password=' + encodeURIComponent(myPassword) + '&fd=' + encodeURIComponent(JSON.stringify(chunk2));
+    await fetch(url1);
+    await fetch(url2);
     btn.textContent = 'נשמר ✓';
   } catch (err) {
     btn.textContent = 'שגיאה בשמירה';
