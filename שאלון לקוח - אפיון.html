@@ -525,9 +525,20 @@
     opacity: 0; transition: opacity 0.3s; pointer-events: none;
   }
   #save-status.visible { opacity: 1; }
+  .back-to-portal {
+    position: fixed; top: 16px; right: 16px; z-index: 50;
+    background: var(--white); color: var(--black);
+    font-size: 12px; font-weight: 500; letter-spacing: 0.04em;
+    padding: 8px 14px; border-radius: 20px;
+    border: 0.5px solid var(--gray-light); text-decoration: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06); transition: background 0.15s;
+  }
+  .back-to-portal:hover { background: var(--gray-bg); }
 </style>
 </head>
 <body>
+
+<a href="portal.html" class="back-to-portal">‹ חזרה לפורטל</a>
 
 <!-- מסך כניסה -->
 <div id="login-screen">
