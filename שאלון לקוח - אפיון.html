@@ -1284,6 +1284,15 @@ var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzmEwhOcJvI_tEwsgzeAp7
 var currentPassword = null;
 var autoSaveTimer = null;
 
+function autoLoginFromUrl() {
+  var params = new URLSearchParams(window.location.search);
+  var pass = params.get('password');
+  if (!pass) return;
+  document.getElementById('login-password').value = pass;
+  doLogin();
+}
+window.addEventListener('load', autoLoginFromUrl);
+
 function doLogin() {
   var pass = document.getElementById('login-password').value.trim();
   if (!pass) return;
